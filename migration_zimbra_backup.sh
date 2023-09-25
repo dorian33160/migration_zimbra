@@ -105,6 +105,46 @@ function alias {
             zmprov ga  $i | grep zimbraMailAlias |awk '{print $2}' > alias/$i.txt
             echo $i
         done
+    find alias/ -type f -empty | xargs -n1 rm -v 
+}
+
+#Fonction qui permet de récupérer les signatures des utilisateurs
+function emails_signature {
+    mkdir signatures
+    for i in `cat emails.txt`
+        do
+            zmprov ga $i zimbraPrefMailSignatureHTML > /tmp/signature
+            sed -i -e "1d" /tmp/signature
+            sed 's/zimbraPrefMailSignatureHTML: //g' /tmp/signature > signatures/$i.signature
+            rm -rf /tmp/signature
+            zmprov ga $i zimbraSignatureName > /tmp/name
+            sed -i -e "1d" /tmp/name
+            sed 's/zimbraSignatureName: //g' /tmp/name > signatures/$i.name
+            rm -rf /tmp/name
+        done
+}
+
+#Fonction qui permet de récupérer les partages des utilisateurs
+function user_filters {
+    mkdir filter/
+        for i in `cat emails.txt`
+            do
+                zmprov ga $i zimbraMailSieveScript > /tmp/filter
+                sed -i -e "1d" /tmp/filter
+                sed 's/zimbraMailSieveScript: //g' /tmp/filter  > filter/$i.filter
+                rm -f /tmp/filter
+                echo "Filter  downloaded for .... $i"
+            done
+}
+
+#Fonction qui permet de récupérer les mails des utilisateurs
+function mail_backup {
+    for email in `cat /backups/zmigrate/emails.txt`
+        do
+            echo "Backuping $email"
+            zmmailbox -z -m $email getRestURL '/?fmt=tgz' > $email.tgz
+            echo $email
+        done
 }
 
 function main {
@@ -117,6 +157,11 @@ function main {
             distribution_list
             distribution_list_members
             users_password
+            userdata
+            alias
+            emails_signature
+            user_filters
+            mail_backup
         else
             exit
     fi
