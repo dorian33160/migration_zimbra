@@ -99,7 +99,7 @@ function userdata {
 }
 
 #Fonction qui permet de récupérer les alias des utilisateurs
-function alias {
+function alias_backup {
     for i in `cat emails.txt`
         do
             zmprov ga  $i | grep zimbraMailAlias |awk '{print $2}' > alias/$i.txt
@@ -158,7 +158,7 @@ function main {
             distribution_list_members
             users_password
             userdata
-            alias
+            alias_backup
             emails_signature
             user_filters
             mail_backup
