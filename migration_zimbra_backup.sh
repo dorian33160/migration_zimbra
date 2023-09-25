@@ -90,10 +90,20 @@ function users_password {
     find forwarding/ -type f -empty | xargs -n1 rm -v
 }
 
+#Fonction qui permet de récupérer les données des utilisateurs
 function userdata {
     for i in `cat emails.txt`
         do
             zmprov ga $i  | grep -i Name: > userdata/$i.txt
+        done
+}
+
+#Fonction qui permet de récupérer les alias des utilisateurs
+function alias {
+    for i in `cat emails.txt`
+        do
+            zmprov ga  $i | grep zimbraMailAlias |awk '{print $2}' > alias/$i.txt
+            echo $i
         done
 }
 
